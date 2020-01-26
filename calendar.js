@@ -1,23 +1,24 @@
-var currentWeekMonday = new Date();
-var currentWeekSunday = new Date();
+var dateConfig = {
+ monday: startOfWeek(new Date())
+}
 
 function createCalendar(){
-  currentWeekMonday = getMonday(currentWeekMonday);
-  currentWeekSunday = new Date(currentWeekSunday.setDate(currentWeekMonday.getDate() + 6));
-  addWeekLabels();
+  var monday = dateConfig.monday;
+  addWeekLabels(monday);
   createHeaderDays();
   createCells();
   addListenersToCells();
   addListenersToButtons();
 };
 
-function getMonday(date){
-  var newDate = date.setDate(date.getDate() - date.getDay() + 1);
-  return new Date(newDate);
+function startOfWeek(date){
+    var diff = date.getDate() - date.getDay() + (date.getDay() === 0 ? -6 : 1);
+    return new Date(date.setDate(diff));
 };
 
+
 function dateToString(date){
-  var newDate = new Date(date);
+  var newDate = date;
   var day = newDate.getDate();
   var month = newDate.getMonth() + 1;
   var year = newDate.getFullYear();
@@ -87,40 +88,42 @@ function addListenersToCells(){
   });
 };
 
-function addWeekLabels(){
-
+function addWeekLabels(monday){
+  var sunday = new Date(monday.getFullYear(), monday.getMonth(), monday.getDate()+6);
   // creating the week labels
   var startOfWeek = document.getElementById("start-of-week-label");
   var endOfWeek = document.getElementById("end-of-week-label");
 
-  startOfWeek.innerHTML += dateToString(currentWeekMonday)
-  endOfWeek.innerHTML += dateToString(currentWeekSunday);
+  startOfWeek.innerHTML = dateToString(monday);
+  endOfWeek.innerHTML = dateToString(sunday);
+};
+
+
+function addListenersToButtons(){
+  var previous = document.getElementById('previous');
+  var next = document.getElementById('next');
+  
+  previous.addEventListener('click', () => {
+    previousWeek();
+    addWeekLabels(dateConfig.monday);
+  });
+
+  next.addEventListener('click', () => {
+    nextWeek();
+    addWeekLabels(dateConfig.monday);
+  });
+};
+
+function previousWeek(){
+  var monday = dateConfig.monday;
+  var previousMonday = new Date(monday.getFullYear(), monday.getMonth(), monday.getDate()-7);
+  dateConfig.monday = previousMonday;
 };
 
 function nextWeek(){
- currentWeekMonday = currentWeekMonday.setDate(currentWeekMonday.getDate() + 7);
- currentWeekSunday = currentWeekSunday.setDate(currentWeekSunday.getDate() + 7);
- addWeekLabels();
+ var monday = dateConfig.monday;
+ var nextMonday = new Date(monday.getFullYear(), monday.getMonth(), monday.getDate()+7);
+ dateConfig.monday = nextMonday;
 };
 
-function addListenersToButtons(){
- var previous = document.getElementById('previous');
- var next = document.getElementById('next');
- previous.addEventListener('click', () => {
-   previousWeek();
- });
-
- next.addEventListener('click', () => {
-   nextWeek();
- });
-
-function previousWeek(){
- console.log(currentWeekMonday.getDate());
- currentWeekMonday = currentWeekMonday.setDate(currentWeekMonday.getDate() - 7);
- currentWeekSunday = currentWeekSunday.setDate(currentWeekSunday.getDate() - 7);
- addWeekLabels();
-};
-}
-
-
-createCalendar();
+createCalendar(dateConfig.monday);
