@@ -1,6 +1,44 @@
 var dateConfig = {
- monday: startOfWeek(new Date())
+ monday: startOfWeek(new Date()),
+ appointments: [
+  {
+   date: "2020-01-27",
+   hour: "14:00"
+  }
+ ]
 }
+
+function checkAppointments(){
+  // Check one by one the elements in the appointments list
+  // see if they correspond to the current week we are displaying
+  // if one of the elements contains the booking
+  // we go to the corresponding cell and change the style
+  let mondayDate = dateConfig.monday.getDate();
+  let sunday = new Date(mondayDate + 6);
+  dateConfig.appointments.forEach((app) => {
+    let appointmentDate = new Date(app.date);
+    if (appointmentDate.getDate() >= mondayDate && appointmentDate <= sunday.getDate()){
+
+    }
+  });
+};
+
+// Given the id of a cell and the current Monday (stored in Dateconfig)
+// We retrieve a json object that has a corresponding date and hour.
+function getAppointment(id){
+  var days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+  
+ // example id = Monday-12:00
+ let day = id.split('-')[0];
+
+ let numericDay = days.indexOf(day);
+ console.log(numericDay);
+
+ let cellDate = new Date(dateConfig.monday.getDate() + numericDay);
+ console.log(cellDate);
+ return cellDate.toString();
+};
+
 
 function createCalendar(){
   var monday = dateConfig.monday;
@@ -54,7 +92,7 @@ function createHeaderDays(){
 };
 
 function createCells(){
-   var days = ["M", "T", "W", "T", "F", "S", "S"]
+   var days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 
    var tableBody = document.getElementById('booking-calendar__body');
     var hours = createHours();
